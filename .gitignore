@@ -8,6 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+etc/secrets/api_key.txt
 .idea
 .venv/
 uploads/

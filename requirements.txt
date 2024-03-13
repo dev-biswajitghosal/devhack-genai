@@ -1,3 +1,6 @@
 Flask~=3.0.2
 python-dotenv~=1.0.1
 google-generativeai
+Werkzeug~=3.0.1
+gunicorn
+bcrypt~=4.1.2

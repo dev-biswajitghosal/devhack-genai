@@ -15,9 +15,7 @@ def index():
 def api():
     zip_code = request.form.get('zip')
     prompt = f"Find healthcare providers near {zip_code}"
-    print(prompt)
     response = generate_content(prompt)
-    print(response)
     return jsonify({'response': response})
 
 
@@ -29,8 +27,6 @@ def generate():
     age = request.form.get('age')
     prompt = f"Analyze the risk profile for {name} in the {industry} industry in {location} at the age of {age}"
     response = generate_content(prompt)
-    print(prompt)
-    print(response)
     return jsonify({'response': response})
 
 

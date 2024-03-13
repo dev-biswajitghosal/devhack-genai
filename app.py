@@ -1,14 +1,16 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from gemini import generate_content
 
 app = Flask(__name__)
 CORS(app)
 
+host = "https://devhack-genai.onrender.com"
+
 
 @app.route('/')
 def index():
-    return "Hello, World!"
+    return render_template('index.html', host=host)
 
 
 @app.route('/api/get_healthcare_data', methods=['POST'])

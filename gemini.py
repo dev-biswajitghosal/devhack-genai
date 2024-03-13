@@ -57,18 +57,7 @@ convo = model.start_chat(history=[
 
 
 def generate_content(prompt=None):
-    prompt = prompt or "Please provide a prompt for me."
+    prompt = prompt or "Hi"
     convo.send_message(prompt)
     return convo.last.text
 
-# def generate_content(prompt=None, file=None):
-#     if file is not None:
-#         with open(file, "r") as f:
-#             file_content = f.read()
-#         prompt = "Summarize the following article:\n\n" + file_content
-#     else:
-#         prompt = prompt or "Please provide a prompt for me."
-#
-#     convo.send_message(prompt)
-#     print(convo.last.text)
-#     return convo.last.text

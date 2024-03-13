@@ -1,4 +1,5 @@
 Flask~=3.0.2
+flask_cors
 python-dotenv~=1.0.1
 google-generativeai
 Werkzeug~=3.0.1

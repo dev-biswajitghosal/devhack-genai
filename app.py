@@ -23,11 +23,13 @@ def get_healthcare_data():
             return jsonify({'message': 'Please Give Correct API Key'}), 401
         else:
             zip_code = request.form.get('zip')
-            prompt = f"Find healthcare providers near {zip_code}"
+            state = request.form.get('state')
+            city = request.form.get('city')
+            prompt = f"Find healthcare providers near the location {zip_code},{state},{city}"
             response = generate_content(prompt)
             return jsonify({'response': response}), 200
     else:
-        return jsonify({'message': 'Please Give Correct API Key'}), 401
+        return jsonify({'message': 'Please Give API Key'}), 401
 
 
 @app.route('/api/analyze_risk_profile', methods=['POST'])
@@ -38,15 +40,17 @@ def analyze_risk_profile():
         if not is_authenticated:
             return jsonify({'message': 'Please Give Correct API Key'}), 401
         else:
-            name = request.form.get('name')
             industry = request.form.get('industry')
-            location = request.form.get('zip')
+            zip_code = request.form.get('zip')
+            state = request.form.get('state')
+            city = request.form.get('city')
             age = request.form.get('age')
-            prompt = f"Analyze the risk profile for {name} in the {industry} industry in {location} at the age of {age}"
+            prompt = (f"Analyze the risk profile for {industry} industry for the location of {zip_code},{state},{city}"
+                      f" and the people of age {age}.")
             response = generate_content(prompt)
             return jsonify({'response': response}), 200
     else:
-        return jsonify({'message': 'Please Give Correct API Key'}, 401)
+        return jsonify({'message': 'Please Give API Key'}, 401)
 
 
 if __name__ == '__main__':

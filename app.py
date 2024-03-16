@@ -25,7 +25,9 @@ def get_healthcare_data():
             zip_code = request.form.get('zip')
             state = request.form.get('state')
             city = request.form.get('city')
-            prompt = f"Find healthcare providers near the location {zip_code},{state},{city}"
+            if not zip_code and not state and not city:
+                return jsonify({'message': 'Please Give Correct Location'}), 400
+            prompt = f"Find healthcare providers near the location {city},{state},{zip_code}"
             response = generate_content(prompt)
             return jsonify({'response': response}), 200
     else:
@@ -39,16 +41,21 @@ def analyze_risk_profile():
         is_authenticated = authenticate(auth_token)
         if not is_authenticated:
             return jsonify({'message': 'Please Give Correct API Key'}), 401
-        else:
-            industry = request.form.get('industry')
-            zip_code = request.form.get('zip')
-            state = request.form.get('state')
-            city = request.form.get('city')
-            age = request.form.get('age')
-            prompt = (f"Analyze the risk profile for {industry} industry for the location of {zip_code},{state},{city}"
-                      f" and the people of age {age}.")
-            response = generate_content(prompt)
-            return jsonify({'response': response}), 200
+        industry = request.form.get('industry') or "any"
+        zip_code = request.form.get('zip')
+        state = request.form.get('state')
+        city = request.form.get('city')
+        age = request.form.get('age') or "any"
+        if not zip_code and not state and not city:
+            return jsonify({'message': 'Please Give Correct Location'}), 400
+        prompt = (f"Analyze the risk profile for {industry} industry for the location of {city},{state},{zip_code}"
+                  f" and the people of age {age}. Give me the risk factors and the risk score. "
+                  f"Output for website div element (in HTML format)")
+        print(prompt)
+        response = generate_content(prompt)
+        print(response)
+        return jsonify({'response': response}), 200
+
     else:
         return jsonify({'message': 'Please Give API Key'}, 401)
 

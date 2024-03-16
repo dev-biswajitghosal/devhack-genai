@@ -49,8 +49,7 @@ def analyze_risk_profile():
         if not zip_code and not state and not city:
             return jsonify({'message': 'Please Give Correct Location'}), 400
         prompt = (f"Analyze the risk profile for {industry} industry for the location of {city},{state},{zip_code}"
-                  f" and the people of age {age}. Give me the risk factors and the risk score. "
-                  f"Output for website div element (in HTML format)")
+                  f" and the people of age {age}. Give me the risk factors and the risk score. ")
         print(prompt)
         response = generate_content(prompt)
         print(response)

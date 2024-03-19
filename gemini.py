@@ -44,16 +44,7 @@ model = genai.GenerativeModel(model_name="gemini-pro",
                               generation_config=generation_config,
                               safety_settings=safety_settings)
 
-convo = model.start_chat(history=[
-    {
-        "role": "user",
-        "parts": ["hi"]
-    },
-    {
-        "role": "model",
-        "parts": ["Hello! How can I assist you today?"]
-    },
-])
+convo = model.start_chat()
 
 
 def generate_content(prompt=None):

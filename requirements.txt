@@ -5,3 +5,5 @@ google-generativeai
 Werkzeug~=3.0.1
 gunicorn
 bcrypt~=4.1.2
+langchain~=0.1.12
+PyPDF2~=3.0.1

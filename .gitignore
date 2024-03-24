@@ -11,6 +11,7 @@ __pycache__/
 etc/secrets/api_key.txt
 .idea
 .venv/
+chroma/
 uploads/
 build/
 develop-eggs/

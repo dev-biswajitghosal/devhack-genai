@@ -39,7 +39,7 @@ def split_text(documents: list[Document]):
     return chunks
 
 
-def save_to_chroma(chunks: list[Document],prefix):
+def save_to_chroma(chunks: list[Document], prefix):
     chroma_path = f"chroma/{prefix}"
     # Clear out the database first.
     if os.path.exists(chroma_path):

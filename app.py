@@ -61,7 +61,7 @@ def analyze_risk_profile():
 
 
 @app.route('/api/generate_genai_data', methods=['POST'])
-def get_safety_tips():
+def generate_genai_data():
     if 'Authorization' in request.headers:
         auth_token = request.headers['Authorization']
         is_authenticated = authenticate(auth_token)
@@ -70,23 +70,8 @@ def get_safety_tips():
         category = request.form.get('category')
         industry = request.form.get('industry') or "any"
         state = request.form.get('state')
-        if category == "safety":
-            prompt = f"Give me the safety tips for {industry} industry for {state}"
-            response = generate_content_from_documents(prompt, prefix="safety/")
-            if not response:
-                return jsonify({'message': 'Unable to find matching results'}), 400
-            return jsonify({'response': response}), 200
-        elif category == "regulations":
-            prompt = f"Give me the regulations for {industry} industry for {state}"
-            response = generate_content_from_documents(prompt, prefix="regulations/")
-            if not response:
-                return jsonify({'message': 'Unable to find matching results'}), 400
-            return jsonify({'response': response}), 200
-        elif category == "vicinity":
-            prompt = f"Give me the vicinity details for {industry} industry for {state}"
-            response = generate_content_from_documents(prompt, prefix="vicinity/")
-            if not response:
-                return jsonify({'message': 'Unable to find matching results'}), 400
+        if category in ["safety", "regulations", "vicinity"]:
+            response = generate_content_from_documents(category=category, industry=industry, state=state)
             return jsonify({'response': response}), 200
         else:
             return jsonify({'message': 'Please Give Correct Category'}), 400

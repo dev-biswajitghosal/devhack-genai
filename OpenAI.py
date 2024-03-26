@@ -16,6 +16,7 @@ aws_secret = os.getenv("AWS_SECRET_ACCESS_KEY")
 aws_access = os.getenv("AWS_ACCESS_KEY_ID")
 s3 = boto3.client('s3', aws_access_key_id=aws_access, aws_secret_access_key=aws_secret)
 
+
 PROMPT_TEMPLATE = """
 Answer the question based only on the following context:
 
@@ -27,9 +28,12 @@ Answer the question based on the above context: {question}
 """
 
 
-def generate_content_from_documents(query_text, prefix):
-    response = generate_data_store(prefix)
+def generate_content_from_documents(category=None, industry=None, state=None):
+    prefix = f"{category}/"
+    query_text = f"Give me the safety tips for {industry} industry for {state}"
     chroma_path = f"chroma/{prefix}"
+    response = generate_data_store(prefix)
+
     if not response:
         print("Unable to generate the data store.")
         return None
@@ -62,6 +66,8 @@ def generate_content_from_documents(query_text, prefix):
     formatted_response = {
         "response": response_text,
         "sources": formatted_source,
+        "industry": industry,
+        "state": state,
         "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
     url = s3.put_object(Bucket=aws_bucket, Key=f"archive/{prefix}{datetime.now()}.txt", Body=str(formatted_response))

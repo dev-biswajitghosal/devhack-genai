@@ -1,4 +1,6 @@
 # Import the necessary libraries
+from datetime import datetime
+
 import boto3
 import os
 # Import other modules of project directory
@@ -36,9 +38,26 @@ def get_file_from_s3(prefix):
         response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
         for obj in response.get('Contents', []):
             key = obj['Key']
-            txt = s3.get_object(Bucket=bucket_name,  Key=key)
+            txt = s3.get_object(Bucket=bucket_name, Key=key)
             files.append(txt['Body'].read().decode('utf-8'))
         return files
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
+
+
+def upload_file_to_s3(data, category, industry, state):
+    try:
+        key = f"archive/{category}/{(datetime.now())}.json"
+        #     upload data as a file to S3 bucket
+        formatted_data = {
+            "response": data,
+            "industry": industry,
+            "state": state,
+            "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        s3.put_object(Bucket=bucket_name, Key=key, Body=str(formatted_data))
+        return True
     except Exception as e:
         print(f"Error: {e}")
         return False

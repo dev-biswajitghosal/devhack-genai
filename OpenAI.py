@@ -32,7 +32,8 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
                                     policy_number=None, claims_data=None):
     prefix = f"{category}/"
     query_text = (f"Give me the {category} tips for {industry} industry for {state},{zip_code} for age {age}"
-                  f" based on the claim data {claims_data}.")
+                  f" based on the claim data {claims_data}."
+                  f"just give me 10 bullet points for the same as output.")
     chroma_path = f"chroma/{prefix}"
     response = generate_data_store(prefix)
 

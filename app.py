@@ -19,26 +19,6 @@ def index():
     return render_template('index.html', host=host)
 
 
-# @app.route('/api/get_healthcare_data', methods=['POST'])
-# def get_healthcare_data():
-#     if 'Authorization' in request.headers:
-#         auth_token = request.headers['Authorization']
-#         is_authenticated = authenticate(auth_token)
-#         if not is_authenticated:
-#             return jsonify({'message': 'Please Give Correct API Key'}), 401
-#         else:
-#             zip_code = request.form.get('zip')
-#             state = request.form.get('state')
-#             city = request.form.get('city')
-#             if not zip_code and not state and not city:
-#                 return jsonify({'message': 'Please Give Correct Location'}), 400
-#             prompt = f"Find healthcare providers near the location {city},{state},{zip_code}"
-#             response = generate_content(prompt)
-#             return jsonify({'response': response}), 200
-#     else:
-#         return jsonify({'message': 'Please Give API Key'}), 401
-
-
 @app.route('/api/analyze_risk_profile', methods=['POST'])
 def analyze_risk_profile():
     if 'Authorization' in request.headers:
@@ -46,38 +26,13 @@ def analyze_risk_profile():
         is_authenticated = authenticate(auth_token)
         if not is_authenticated:
             return jsonify({'message': 'Please Give Correct API Key'}), 401
+        category = request.form.get('category')
         industry = request.form.get('industry') or "any"
         zip_code = request.form.get('zip')
         state = request.form.get('state')
-        city = request.form.get('city')
         age = request.form.get('age') or "any"
         policy_number = request.form.get('policyNumber')
         claims_data = request.form.get('claimsdata')
-        if not zip_code and not state and not city:
-            return jsonify({'message': 'Please Give Correct Location'}), 400
-        prompt = (f"Analyze the risk profile for {industry} industry for the location of {city},{state},{zip_code}"
-                  f" and the people of age {age}.These are the claims data {claims_data}")
-        response = generate_content(prompt)
-        return jsonify({
-            'response': response,
-            'policyNumber': policy_number,
-            'date': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        }), 200
-
-    else:
-        return jsonify({'message': 'Please Give API Key'}, 401)
-
-
-@app.route('/api/generate_genai_data', methods=['POST'])
-def generate_genai_data():
-    if 'Authorization' in request.headers:
-        auth_token = request.headers['Authorization']
-        is_authenticated = authenticate(auth_token)
-        if not is_authenticated:
-            return jsonify({'message': 'Please Give Correct API Key'}), 401
-        category = request.form.get('category')
-        industry = request.form.get('industry') or "any"
-        state = request.form.get('state')
         if category in ["safety", "regulations", "vicinity"]:
             if category == "vicinity":
                 weather_data = get_weather_alerts()
@@ -86,12 +41,17 @@ def generate_genai_data():
                 upload_file_to_s3(data=response, category=category, industry=industry, state=state)
                 return jsonify({'response': response}), 200
             else:
-                response = generate_content_from_documents(category=category, industry=industry, state=state)
-                return jsonify({'response': response}), 200
+                response = generate_content_from_documents(category=category, industry=industry, state=state, age=age,
+                                                           zip_code=zip_code, policy_number=policy_number,
+                                                           claims_data=claims_data)
+                if response is not None:
+                    return response, 200
+                else:
+                    return jsonify({'message': 'Unable to generate the data store.'}), 400
         else:
             return jsonify({'message': 'Please Give Correct Category'}), 400
     else:
-        return jsonify({'message': 'Please Give an API Key'}, 401)
+        return jsonify({'message': 'Please Give API Key'}, 401)
 
 
 @app.route('/api/get_genai_data', methods=['POST'])
@@ -101,7 +61,9 @@ def get_genai_data():
         is_authenticated = authenticate(auth_token)
         if not is_authenticated:
             return jsonify({'message': 'Please Give Correct API Key'}), 401
-        category = request.form.get('category')
+        # get body data
+        category = request.get_json().get('category')
+        print(category)
         if category == "safety":
             response = get_file_from_s3("safety/")
             return jsonify({'data': response}), 200

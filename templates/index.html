@@ -17,27 +17,6 @@
             <div class="col-md-6 mx-auto">
                 <div class="card mt-5">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="card-title text-center">Get Healthcare Data</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="input-group mb-3">
-                            <input type="text" id="getHealthcareData" class="form-control" value="{{host}}/api/get_healthcare_data" readonly>
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" onclick="copyCode('getHealthcareData')">Copy</button>
-                            </div>
-                        </div>
-                        <h4>Request Body:</h4>
-                        <ul class="list-group">
-                            <li class="list-group-item">Method: POST</li>
-                            <li class="list-group-item">Headers: Authorization</li>
-                            <li class="list-group-item">Form-Data: zip, state, city</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 mx-auto">
-                <div class="card mt-5">
-                    <div class="card-header bg-primary text-white">
                         <h5 class="card-title text-center">Analyze Risk Profile</h5>
                     </div>
                     <div class="card-body">
@@ -52,27 +31,6 @@
                             <li class="list-group-item">Method: POST</li>
                             <li class="list-group-item">Headers: Authorization</li>
                             <li class="list-group-item">Form-Data: industry, zip, state, city, age</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 mx-auto">
-                <div class="card mt-5">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="card-title text-center">Generate Gen AI Data</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="input-group mb-3">
-                            <input type="text" id="generateGenAiData" class="form-control" value="{{host}}/api/generate_genai_data" readonly>
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" onclick="copyCode('generateGenAiData')">Copy</button>
-                            </div>
-                        </div>
-                        <h4>Request Body:</h4>
-                        <ul class="list-group">
-                            <li class="list-group-item">Method: POST</li>
-                            <li class="list-group-item">Headers: Authorization</li>
-                            <li class="list-group-item">Form-Data: industry, state, category</li>
                         </ul>
                     </div>
                 </div>

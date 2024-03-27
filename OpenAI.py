@@ -28,9 +28,11 @@ Answer the question based on the above context: {question}
 """
 
 
-def generate_content_from_documents(category=None, industry=None, state=None):
+def generate_content_from_documents(category=None, industry=None, age=None, zip_code=None, state=None,
+                                    policy_number=None, claims_data=None):
     prefix = f"{category}/"
-    query_text = f"Give me the safety tips for {industry} industry for {state}"
+    query_text = (f"Give me the {category} tips for {industry} industry for {state},{zip_code} for age {age}"
+                  f" based on the claim data {claims_data}.")
     chroma_path = f"chroma/{prefix}"
     response = generate_data_store(prefix)
 
@@ -55,8 +57,9 @@ def generate_content_from_documents(category=None, industry=None, state=None):
 
     model = ChatOpenAI()
     response_text = model.predict(prompt)
-
     sources = [doc.metadata.get("source", None) for doc, _score in results]
+    if not response_text:
+        return False
     formatted_source = []
     for source in sources:
         url = "/".join(source.split("/")[3:])
@@ -64,13 +67,15 @@ def generate_content_from_documents(category=None, industry=None, state=None):
         if formatted_url not in formatted_source:
             formatted_source.append(formatted_url)
     formatted_response = {
+        "policyNumber": policy_number,
+        "category": category,
         "response": response_text,
         "sources": formatted_source,
         "industry": industry,
         "state": state,
         "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
-    url = s3.put_object(Bucket=aws_bucket, Key=f"archive/{prefix}{datetime.now()}.txt", Body=str(formatted_response))
-    if url:
-        return True
+    s3.put_object(Bucket=aws_bucket, Key=f"archive/{prefix}{datetime.now()}.txt", Body=str(formatted_response))
+    if response_text is not None:
+        return formatted_response
     return False

@@ -19,10 +19,9 @@ def get_weather_alerts():
             # print(latest_alert)
             return [latest_alert]
         else:
-            print("No weather alerts found for today.")
-            return []
+            return None
     else:
-        print(f"Failed to fetch weather alerts. Status code: {response.status_code}")
-        return []
+        return None
 
 
+# print(get_weather_alerts())

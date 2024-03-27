@@ -1,8 +1,9 @@
 import os
 import boto3
+from openai import OpenAI
 from langchain_community.vectorstores.chroma import Chroma
-from langchain_community.embeddings import OpenAIEmbeddings
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 from create_database import generate_data_store
@@ -16,14 +17,10 @@ aws_secret = os.getenv("AWS_SECRET_ACCESS_KEY")
 aws_access = os.getenv("AWS_ACCESS_KEY_ID")
 s3 = boto3.client('s3', aws_access_key_id=aws_access, aws_secret_access_key=aws_secret)
 
-
 PROMPT_TEMPLATE = """
 Answer the question based only on the following context:
-
 {context}
-
 ---
-
 Answer the question based on the above context: {question}
 """
 
@@ -49,18 +46,17 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
     results = db.similarity_search_with_relevance_scores(query_text, k=3)
     if len(results) == 0 or results[0][1] < 0.7:
         print(f"Unable to find matching results.")
-        return False
-
+        # stop using chroma path
+        return None
     context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
-    # print(prompt)
 
     model = ChatOpenAI()
-    response_text = model.predict(prompt)
+    response_text = model.invoke(prompt)
     sources = [doc.metadata.get("source", None) for doc, _score in results]
     if not response_text:
-        return False
+        return None
     formatted_source = []
     for source in sources:
         url = "/".join(source.split("/")[3:])
@@ -76,7 +72,17 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
         "state": state,
         "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
-    s3.put_object(Bucket=aws_bucket, Key=f"archive/{prefix}{datetime.now()}.txt", Body=str(formatted_response))
+    s3.put_object(Bucket=aws_bucket, Key=f"archive/{prefix}{datetime.now()}.json", Body=str(formatted_response))
     if response_text is not None:
         return formatted_response
-    return False
+    return None
+
+
+def generate_content(prompt=None):
+    client = OpenAI(api_key=openai_api)
+    response = client.completions.create(
+        model="gpt-3.5-turbo-instruct",
+        prompt=prompt,
+        max_tokens=4000,
+    )
+    return response.choices[0].text

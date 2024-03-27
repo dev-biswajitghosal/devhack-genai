@@ -1,8 +1,7 @@
 # Import the necessary libraries
-from datetime import datetime
-
-import boto3
 import os
+import boto3
+from datetime import datetime
 # Import other modules of project directory
 from dotenv import load_dotenv
 

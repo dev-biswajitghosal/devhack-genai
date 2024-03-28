@@ -31,7 +31,7 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
     prefix = f"{category}/"
     query_text = (f"Give me the {category} tips for {industry} industry for {state}, {zip_code}"
                   f" based on the claim data {claims_data},{age}.")
-    chroma_path = f"chroma/{prefix}"
+    chroma_path = f"/chroma/{prefix}"
     if not os.path.exists(chroma_path):
         response = generate_data_store(prefix)
         if not response:

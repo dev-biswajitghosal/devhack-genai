@@ -24,13 +24,14 @@ def analyze_risk_profile():
         is_authenticated = authenticate(auth_token)
         if not is_authenticated:
             return jsonify({'message': 'Please Give Correct API Key'}), 401
-        category = request.form.get('category')
-        industry = request.form.get('industry') or "any"
-        zip_code = request.form.get('zip')
-        state = request.form.get('state')
-        age = request.form.get('age') or "any"
-        policy_number = request.form.get('policyNumber')
-        claims_data = request.form.get('claimsdata')
+        body = request.get_json()
+        category = body.get('category')
+        industry = body.get('industry') or "any"
+        zip_code = body.get('zip')
+        state = body.get('state')
+        age = body.get('age') or "any"
+        policy_number = body.get('policyNumber')
+        claims_data = body.get('claimsdata')
         if not category or not industry or not zip_code or not state or not age or not policy_number or not claims_data:
             return jsonify({'message': 'Please Give All Required Fields'}), 400
         if category in ["safety", "regulations", "vicinity"]:

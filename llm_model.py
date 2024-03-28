@@ -75,10 +75,12 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
     return None
 
 
-def generate_content(prompt=None):
+def generate_content(weather_data=None):
+    prompt = f"{weather_data} give me the key points in bullets points only about weather data"
     client = OpenAI(api_key=openai_api)
     response = client.completions.create(
         model="gpt-3.5-turbo-instruct",
         prompt=prompt,
+        max_tokens=100,
     )
     return response.choices[0].text

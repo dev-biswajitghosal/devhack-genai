@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 
 from S3_bucket import get_file_from_s3, upload_file_to_s3
-from llm_model import generate_content_from_documents,generate_content
+from llm_model import generate_content_from_documents, generate_content
 from weatherAPI import get_weather_alerts
 from auth import authenticate
 
@@ -36,9 +36,8 @@ def analyze_risk_profile():
                 weather_data = get_weather_alerts()
                 if weather_data is None:
                     return jsonify({'message': 'Unable to fetch the Vicinity data.'}), 400
-                prompt = (f"Summarise the headlines,description ,instruction of the following data {weather_data} in "
-                          f"50 words .")
-                response = generate_content(prompt)
+                response = generate_content(weather_data)
+
                 upload_file_to_s3(data=response, category=category, industry=industry, state=state)
                 return jsonify({'response': response}), 200
             else:

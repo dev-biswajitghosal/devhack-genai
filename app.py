@@ -31,6 +31,8 @@ def analyze_risk_profile():
         age = request.form.get('age') or "any"
         policy_number = request.form.get('policyNumber')
         claims_data = request.form.get('claimsdata')
+        if not category or not industry or not zip_code or not state or not age or not policy_number or not claims_data:
+            return jsonify({'message': 'Please Give All Required Fields'}), 400
         if category in ["safety", "regulations", "vicinity"]:
             if category == "vicinity":
                 weather_data = get_weather_alerts()
@@ -62,6 +64,8 @@ def get_genai_data():
             return jsonify({'message': 'Please Give Correct API Key'}), 401
         # get body data
         category = request.get_json().get('category')
+        if category not in ["safety", "regulations", "vicinity"]:
+            return jsonify({'message': 'Please Give Correct Category'}), 400
         if category == "safety":
             response = get_file_from_s3("safety/")
             return jsonify({'data': response}), 200

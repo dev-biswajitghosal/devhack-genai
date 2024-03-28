@@ -37,7 +37,6 @@ def analyze_risk_profile():
                 if weather_data is None:
                     return jsonify({'message': 'Unable to fetch the Vicinity data.'}), 400
                 response = generate_content(weather_data)
-
                 upload_file_to_s3(data=response, category=category, industry=industry, state=state)
                 return jsonify({'response': response}), 200
             else:
@@ -51,7 +50,7 @@ def analyze_risk_profile():
         else:
             return jsonify({'message': 'Please Give Correct Category'}), 400
     else:
-        return jsonify({'message': 'Please Give API Key'}, 401)
+        return jsonify({'message': 'Please Give API Key'}), 401
 
 
 @app.route('/api/get_genai_data', methods=['POST'])
@@ -75,7 +74,7 @@ def get_genai_data():
         else:
             return jsonify({'message': 'Please Give Correct Category'}), 400
     else:
-        return jsonify({'message': 'Please Give an API Key'}, 401)
+        return jsonify({'message': 'Please Give an API Key'}), 401
 
 
 if __name__ == '__main__':

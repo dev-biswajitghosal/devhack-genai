@@ -1,4 +1,5 @@
 # Import the necessary libraries
+import json
 import os
 import boto3
 from datetime import datetime
@@ -38,7 +39,10 @@ def get_file_from_s3(prefix):
         for obj in response.get('Contents', []):
             key = obj['Key']
             txt = s3.get_object(Bucket=bucket_name, Key=key)
-            files.append(txt['Body'].read().decode('utf-8'))
+            # files.append(txt['Body'].read().decode('utf-8'))
+            # i am reading json file and appending it to the list
+            files.append(json.loads(txt['Body'].read().decode('utf-8')))
+            # files.append(json.dumps(txt['Body'].read().decode('utf-8')))
         return files
     except Exception as e:
         print(f"Error: {e}")

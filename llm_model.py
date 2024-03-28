@@ -1,3 +1,4 @@
+import json
 import os
 import boto3
 from openai import OpenAI
@@ -59,7 +60,7 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
         formatted_url = f"https://mygenaidevhack.s3.amazonaws.com/{url}"
         if formatted_url not in formatted_source:
             formatted_source.append(formatted_url)
-    formatted_response = {
+    formatted_response = json.dumps({
         "policyNumber": policy_number,
         "category": category,
         "response": response_text,
@@ -67,8 +68,8 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
         "industry": industry,
         "state": state,
         "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    }
-    s3.put_object(Bucket=aws_bucket, Key=f"archive/{prefix}{datetime.now()}.json", Body=str(formatted_response))
+    })
+    s3.put_object(Bucket=aws_bucket, Key=f"archive/{prefix}{datetime.now()}.json", Body=formatted_response)
     if response_text is not None:
         return formatted_response
     return None

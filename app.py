@@ -36,7 +36,8 @@ def analyze_risk_profile():
                 weather_data = get_weather_alerts()
                 if weather_data is None:
                     return jsonify({'message': 'Unable to fetch the Vicinity data.'}), 400
-                prompt = f"Summarise the headlines,description ,instruction of the following data {weather_data} ."
+                prompt = (f"Summarise the headlines,description ,instruction of the following data {weather_data} in "
+                          f"50 words .")
                 response = generate_content(prompt)
                 upload_file_to_s3(data=response, category=category, industry=industry, state=state)
                 return jsonify({'response': response}), 200

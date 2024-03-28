@@ -29,14 +29,16 @@ Answer the question based on the above context: {question}
 def generate_content_from_documents(category=None, industry=None, age=None, zip_code=None, state=None,
                                     policy_number=None, claims_data=None):
     prefix = f"{category}/"
-    query_text = (f"Give me the {category} tips for {industry} industry for {state}, {zip_code}"
-                  f" based on the claim data {claims_data},{age}.")
+    if category == "regulations":
+        query_text = f"Give me the {category} for {industry} industry for {state}, {zip_code}"
+    else:
+        query_text = (f"Give me the {category} tips for {industry} industry for {state}, {zip_code}"
+                      f" based on the claim data {claims_data},{age}.")
     chroma_path = f"/chroma/{prefix}"
     if not os.path.exists(chroma_path):
         response = generate_data_store(prefix)
         if not response:
             return None
-
     # Prepare the DB.
     embedding_function = OpenAIEmbeddings(openai_api_key=openai_api)
     db = Chroma(persist_directory=chroma_path, embedding_function=embedding_function)

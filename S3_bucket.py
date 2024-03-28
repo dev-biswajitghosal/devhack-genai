@@ -28,7 +28,7 @@ def download_last_modified_file_from_s3(prefix=None,industry=None, state=None, p
                 key = obj['Key']
                 txt = s3.get_object(Bucket=bucket_name, Key=key)
                 data = json.loads(txt['Body'].read().decode('utf-8'))
-                if data['industry'] == industry and data['state'] == state and data['policyNumber'] == policy_number:
+                if data['industry'] == industry and data['state'] == state:
                     return data
             return None
         else:

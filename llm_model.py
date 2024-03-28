@@ -69,7 +69,7 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
         "sources": formatted_source,
         "industry": industry,
         "state": state,
-        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        "date": datetime.now().date().strftime("%Y-%m-%d")
     })
     s3.put_object(Bucket=aws_bucket, Key=f"archive/{prefix}{datetime.now()}.json", Body=formatted_response)
     if response_text is not None:

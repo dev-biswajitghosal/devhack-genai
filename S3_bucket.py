@@ -70,7 +70,7 @@ def upload_file_to_s3(data, category, industry, state):
             "response": data,
             "industry": industry,
             "state": state,
-            "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "date": datetime.now().date().strftime("%Y-%m-%d"),
         })
         s3.put_object(Bucket=bucket_name, Key=key, Body=formatted_data)
         return True

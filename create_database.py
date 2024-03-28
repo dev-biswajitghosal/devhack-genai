@@ -59,3 +59,6 @@ def generate_data_store(prefix):
         print("Unable to generate the data store.", e)
         return False
 
+
+generate_data_store("safety/")
+generate_data_store("regulations/")

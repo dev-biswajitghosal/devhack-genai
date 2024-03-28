@@ -16,12 +16,9 @@ def get_weather_alerts():
         if alerts:
             # Sort alerts based on effective time and get the latest one
             latest_alert = max(alerts, key=lambda x: x['properties']['effective'])
-            # print(latest_alert)
             return [latest_alert]
         else:
             return None
     else:
         return None
 
-
-# print(get_weather_alerts())

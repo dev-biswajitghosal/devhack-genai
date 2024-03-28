@@ -28,15 +28,13 @@ Answer the question based on the above context: {question}
 def generate_content_from_documents(category=None, industry=None, age=None, zip_code=None, state=None,
                                     policy_number=None, claims_data=None):
     prefix = f"{category}/"
-    query_text = (f"Give me the {category} tips for {industry} industry for {state},{zip_code} for age {age}"
-                  f" based on the claim data {claims_data}."
-                  f"just give me 10 bullet points for the same as output.")
+    query_text = (f"Give me the {category} tips for {industry} industry for {state}, {zip_code}"
+                  f" based on the claim data {claims_data},{age}.")
     chroma_path = f"chroma/{prefix}"
-    response = generate_data_store(prefix)
-
-    if not response:
-        print("Unable to generate the data store.")
-        return None
+    if not os.path.exists(chroma_path):
+        response = generate_data_store(prefix)
+        if not response:
+            return None
 
     # Prepare the DB.
     embedding_function = OpenAIEmbeddings(openai_api_key=openai_api)
@@ -45,15 +43,13 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
     # Search the DB.
     results = db.similarity_search_with_relevance_scores(query_text, k=3)
     if len(results) == 0 or results[0][1] < 0.7:
-        print(f"Unable to find matching results.")
-        # stop using chroma path
         return None
     context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
 
     model = ChatOpenAI()
-    response_text = model.invoke(prompt)
+    response_text = model.predict(prompt)
     sources = [doc.metadata.get("source", None) for doc, _score in results]
     if not response_text:
         return None

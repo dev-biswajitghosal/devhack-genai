@@ -47,7 +47,7 @@ def analyze_risk_profile():
                 if response is not None:
                     return response, 200
                 else:
-                    return jsonify({'message': 'Unable to generate the data store.'}), 400
+                    return jsonify({'message': f'NO {category} for today.'}), 400
         else:
             return jsonify({'message': 'Please Give Correct Category'}), 400
     else:
@@ -63,7 +63,6 @@ def get_genai_data():
             return jsonify({'message': 'Please Give Correct API Key'}), 401
         # get body data
         category = request.get_json().get('category')
-        print(category)
         if category == "safety":
             response = get_file_from_s3("safety/")
             return jsonify({'data': response}), 200

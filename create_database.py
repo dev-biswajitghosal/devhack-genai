@@ -20,6 +20,7 @@ def load_documents(prefix):
         return documents
     except Exception as e:
         print("Unable to load documents.", e)
+        return []
 
 
 def split_text(documents: list[Document]):
@@ -30,11 +31,6 @@ def split_text(documents: list[Document]):
         add_start_index=True,
     )
     chunks = text_splitter.split_documents(documents)
-    print(f"Split {len(documents)} documents into {len(chunks)} chunks.")
-
-    # document = chunks[25]
-    # print(document.page_content)
-    # print(document.metadata)
 
     return chunks
 
@@ -50,7 +46,6 @@ def save_to_chroma(chunks: list[Document], prefix):
         chunks, OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY), persist_directory=chroma_path
     )
     db.persist()
-    print(f"Saved {len(chunks)} chunks to {chroma_path}.")
 
 
 def generate_data_store(prefix):

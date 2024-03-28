@@ -17,33 +17,47 @@ bucket_name = os.getenv("S3_BUCKET_NAME")
 s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
 
 
-def download_files_from_s3(directory):
-    files = []
+def download_last_modified_file_from_s3(prefix=None):
+    prefix = f"archive/{prefix}"
     try:
-        response = s3.list_objects_v2(Bucket=bucket_name)
-        for obj in response.get('Contents', []):
-            key = obj['Key']
-            local_path = os.path.join(directory, key)
-            s3.download_file(bucket_name, key, local_path)
-            files.append(local_path)  # Append local path instead of URL
-        return files
+        response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
+        if 'Contents' in response:
+            # Sort objects by LastModified timestamp in descending order
+            objects = sorted(response['Contents'], key=lambda obj: obj['LastModified'], reverse=True)
+            # Download only the latest file
+            latest_object = objects[0]
+            key = latest_object['Key']
+            txt = s3.get_object(Bucket=bucket_name, Key=key)
+            return json.loads(txt['Body'].read().decode('utf-8'))
+        else:
+            print("No objects found in the given prefix.")
+            return None
     except Exception as e:
         print(f"Error: {e}")
+        return None
 
 
 def get_file_from_s3(prefix):
+    count = 2
     prefix = f"archive/{prefix}"
     try:
-        files = []
         response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
-        for obj in response.get('Contents', []):
-            key = obj['Key']
-            txt = s3.get_object(Bucket=bucket_name, Key=key)
-            files.append(json.loads(txt['Body'].read().decode('utf-8')))
-        return files
+        if 'Contents' in response:
+            # Sort objects by LastModified timestamp in descending order
+            objects = sorted(response['Contents'], key=lambda obj: obj['LastModified'], reverse=True)
+            # Download the recent files according to count
+            recent_files = []
+            for obj in objects[:count]:
+                key = obj['Key']
+                txt = s3.get_object(Bucket=bucket_name, Key=key)
+                recent_files.append(json.loads(txt['Body'].read().decode('utf-8')))
+            return recent_files
+        else:
+            print("No objects found in the given prefix.")
+            return None
     except Exception as e:
         print(f"Error: {e}")
-        return False
+        return None
 
 
 def upload_file_to_s3(data, category, industry, state):
@@ -61,4 +75,3 @@ def upload_file_to_s3(data, category, industry, state):
     except Exception as e:
         print(f"Error: {e}")
         return False
-

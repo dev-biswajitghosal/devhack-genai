@@ -35,10 +35,6 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
         query_text = (f"Give me the {category} tips for {industry} industry for {state}, {zip_code}"
                       f" based on the claim data {claims_data},{age}.")
     chroma_path = f"/chroma/{prefix}"
-    if not os.path.exists(chroma_path):
-        response = generate_data_store(prefix)
-        if not response:
-            return None
     # Prepare the DB.
     embedding_function = OpenAIEmbeddings(openai_api_key=openai_api)
     db = Chroma(persist_directory=chroma_path, embedding_function=embedding_function)

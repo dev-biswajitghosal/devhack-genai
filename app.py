@@ -3,6 +3,7 @@ from flask_cors import CORS
 
 from S3_bucket import get_file_from_s3, upload_file_to_s3, download_last_modified_file_from_s3
 from llm_model import generate_content_from_documents, generate_content
+from create_database import generate_data_store
 from weatherAPI import get_weather_alerts
 from auth import authenticate
 
@@ -117,6 +118,20 @@ def generate_risk_profile():
                     return jsonify({'message': f'NO {category} for today.'}), 400
         else:
             return jsonify({'message': 'Please Give Correct Category'}), 400
+    else:
+        return jsonify({'message': 'Please Give API Key'}), 401
+
+
+@app.route('/api/load_files_to_chunks', methods=['POST'])
+def load_files_to_chunks():
+    if 'Authorization' in request.headers:
+        auth_token = request.headers['Authorization']
+        is_authenticated = authenticate(auth_token)
+        if not is_authenticated:
+            return jsonify({'message': 'Please Give Correct API Key'}), 401
+        category = request.get_json().get('category')
+        response = generate_data_store(f"{category}/")
+        return jsonify({'data': response}), 200
     else:
         return jsonify({'message': 'Please Give API Key'}), 401
 

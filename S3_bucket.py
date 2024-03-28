@@ -17,18 +17,20 @@ bucket_name = os.getenv("S3_BUCKET_NAME")
 s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
 
 
-def download_last_modified_file_from_s3(prefix=None):
-    prefix = f"archive/{prefix}"
+def download_last_modified_file_from_s3(prefix=None,industry=None, state=None, policy_number=None):
     try:
         response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
         if 'Contents' in response:
             # Sort objects by LastModified timestamp in descending order
             objects = sorted(response['Contents'], key=lambda obj: obj['LastModified'], reverse=True)
             # Download only the latest file
-            latest_object = objects[0]
-            key = latest_object['Key']
-            txt = s3.get_object(Bucket=bucket_name, Key=key)
-            return json.loads(txt['Body'].read().decode('utf-8'))
+            for obj in objects:
+                key = obj['Key']
+                txt = s3.get_object(Bucket=bucket_name, Key=key)
+                data = json.loads(txt['Body'].read().decode('utf-8'))
+                if data['industry'] == industry and data['state'] == state and data['policyNumber'] == policy_number:
+                    return data
+            return None
         else:
             print("No objects found in the given prefix.")
             return None

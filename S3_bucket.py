@@ -29,7 +29,15 @@ def download_last_modified_file_from_s3(prefix=None, industry=None, state=None):
                 txt = s3.get_object(Bucket=bucket_name, Key=key)
                 data = json.loads(txt['Body'].read().decode('utf-8'))
                 if data['industry'] == industry and data['state'] == state:
-                    return data
+                    last_modified_file = json.dumps({
+                        "category": data['category'],
+                        "response": data['response'],
+                        "sources": data['sources'],
+                        "industry": data['industry'],
+                        "state": data['state'],
+                        "date": datetime.now().date().strftime("%Y-%m-%d")
+                    })
+                    return last_modified_file
             return None
         else:
             print("No objects found in the given prefix.")

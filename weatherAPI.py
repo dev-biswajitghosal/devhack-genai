@@ -3,7 +3,7 @@ import requests
 
 
 def get_weather_alerts():
-    zone_code = 'CAC037'
+    zone_code = 'CAC073'
     # Use current date
     yesterday_date = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
     iso_start_date = f"{yesterday_date}T00:00:00Z"
@@ -22,3 +22,5 @@ def get_weather_alerts():
     else:
         return None
 
+
+print(get_weather_alerts())

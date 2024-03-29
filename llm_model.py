@@ -72,11 +72,15 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
 
 
 def generate_content(weather_data=None):
-    prompt = f"{weather_data} give me the key points in bullets points only about weather data"
+    # prompt = f"{weather_data} give me the key points in bullets points only about weather data"
+    prompt = (f" Please summarize the weather data that is in JSON format delimited with triple backticks"
+              f" '''{weather_data}''' in bullet points with details of "
+              f"Event Type,Severity, ,Effective Time,Impact,Location(1st)")
     client = OpenAI(api_key=openai_api)
     response = client.completions.create(
         model="gpt-3.5-turbo-instruct",
         prompt=prompt,
+        temperature=0,
         max_tokens=100,
     )
     return response.choices[0].text

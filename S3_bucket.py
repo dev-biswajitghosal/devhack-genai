@@ -17,7 +17,7 @@ bucket_name = os.getenv("S3_BUCKET_NAME")
 s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
 
 
-def download_last_modified_file_from_s3(prefix=None,industry=None, state=None, policy_number=None):
+def download_last_modified_file_from_s3(prefix=None, industry=None, state=None):
     try:
         response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
         if 'Contents' in response:

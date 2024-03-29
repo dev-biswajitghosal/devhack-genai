@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 
@@ -31,9 +33,9 @@ def analyze_risk_profile():
         zip_code = body.get('zip')
         state = body.get('state')
         age = body.get('age') or "any"
-        policy_number = body.get('policyNumber')
+        # policy_number = body.get('policyNumber')
         claims_data = body.get('claimsdata')
-        if not category or not industry or not zip_code or not state or not age or not policy_number or not claims_data:
+        if not category or not industry or not zip_code or not state or not age or not claims_data:
             return jsonify({'message': 'Please Give All Required Fields'}), 400
         if category in ["safety", "regulations", "vicinity"]:
             if category == "vicinity":
@@ -46,7 +48,7 @@ def analyze_risk_profile():
             else:
                 prefix = f"archive/{category}/"
                 response = download_last_modified_file_from_s3(prefix=prefix, industry=industry,
-                                                               state=state, policy_number=policy_number)
+                                                               state=state)
                 if response is not None:
                     return response, 200
                 else:
@@ -96,9 +98,9 @@ def generate_risk_profile():
         zip_code = body.get('zip')
         state = body.get('state')
         age = body.get('age') or "any"
-        policy_number = body.get('policyNumber')
+        # policy_number = body.get('policyNumber')
         claims_data = body.get('claimsdata')
-        if not category or not industry or not zip_code or not state or not age or not policy_number or not claims_data:
+        if not category or not industry or not zip_code or not state or not age or not claims_data:
             return jsonify({'message': 'Please Give All Required Fields'}), 400
         if category in ["safety", "regulations", "vicinity"]:
             if category == "vicinity":
@@ -107,11 +109,10 @@ def generate_risk_profile():
                     return jsonify({'message': 'Unable to fetch the Vicinity data.'}), 400
                 response = generate_content(weather_data)
                 upload_file_to_s3(data=response, category=category, industry=industry, state=state)
-                return jsonify({'response': response}), 200
+                return jsonify({'response': response, "date": datetime.now().date().strftime("%Y-%m-%d")}), 200
             else:
                 response = generate_content_from_documents(category=category, industry=industry, state=state, age=age,
-                                                           zip_code=zip_code, policy_number=policy_number,
-                                                           claims_data=claims_data)
+                                                           zip_code=zip_code, claims_data=claims_data)
                 if response is not None:
                     return response, 200
                 else:

@@ -7,7 +7,6 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
-from create_database import generate_data_store
 from datetime import datetime
 
 load_dotenv()
@@ -19,21 +18,22 @@ aws_access = os.getenv("AWS_ACCESS_KEY_ID")
 s3 = boto3.client('s3', aws_access_key_id=aws_access, aws_secret_access_key=aws_secret)
 
 PROMPT_TEMPLATE = """
-Answer the question based only on the following context:
+Answer the question based only on the following context don't give reference:
 {context}
 ---
-Answer the question based on the above context: {question}
+Answer the question based on the above context : {question}
 """
 
 
 def generate_content_from_documents(category=None, industry=None, age=None, zip_code=None, state=None,
-                                    policy_number=None, claims_data=None):
+                                    claims_data=None):
     prefix = f"{category}/"
     if category == "regulations":
-        query_text = f"Give me the {category} for {industry} industry for {state}, {zip_code}"
+        query_text = f"Give me the {category} for {industry} industry for {state}."
     else:
-        query_text = (f"Give me the {category} tips for {industry} industry for {state}, {zip_code}"
-                      f" based on the claim data {claims_data},{age}.")
+        query_text = f"Give me the {category} tips for {industry} industry for {state}, {zip_code} and age group of {age - 10} - {age + 10}"
+                      # f" based on the claim data {claims_data}, age group of {age -10} - {age+10} without other data.")
+    print(query_text)
     chroma_path = f"/chroma/{prefix}"
     # Prepare the DB.
     embedding_function = OpenAIEmbeddings(openai_api_key=openai_api)
@@ -46,7 +46,6 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
     context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
-
     model = ChatOpenAI()
     response_text = model.predict(prompt)
     sources = [doc.metadata.get("source", None) for doc, _score in results]
@@ -59,7 +58,6 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
         if formatted_url not in formatted_source:
             formatted_source.append(formatted_url)
     formatted_response = json.dumps({
-        "policyNumber": policy_number,
         "category": category,
         "response": response_text,
         "sources": formatted_source,

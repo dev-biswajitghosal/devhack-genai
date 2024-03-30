@@ -38,8 +38,13 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
                     Date Implemented : <Date> '''
     else:
 
-        query_text = f"Give me the {category} tips for {industry} industry for {state} and age group of {age - 10} - {age + 10}"
-                      # f" based on the claim data {claims_data}, age group of {age -10} - {age+10} without other data.")
+        # query_text = f"Give me the {category} tips for {industry} industry for {state} and age group of {age - 10} - {age + 10}"
+        # f" based on the claim data {claims_data}, age group of {age -10} - {age+10} without other data.")
+        query_text = '''Give me the Safety tips for Constructions industry for the state California. 
+                    Provide details regarding Safety Communications, Planning, rules, training and prevention programs.
+                    The details can be as specific as required for the construction industry on Lifting techniques,
+                    Tool maintenance, communication methods, “to do” lists, checklists, safety or training courses etc.
+                    Provide the details in 10 bullets points, limit each bullet point to 2 lines.'''
     chroma_path = f"/chroma/{prefix}"
     # Prepare the DB.
     embedding_function = OpenAIEmbeddings(openai_api_key=openai_api)

@@ -57,7 +57,7 @@ def get_file_from_s3(prefix):
             objects = sorted(response['Contents'], key=lambda obj: obj['LastModified'], reverse=True)
             # Download the recent files according to count
             recent_files = []
-            for obj in objects[:count]:
+            for obj in objects[1:count+1]:
                 key = obj['Key']
                 txt = s3.get_object(Bucket=bucket_name, Key=key)
                 recent_files.append(json.loads(txt['Body'].read().decode('utf-8')))

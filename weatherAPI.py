@@ -23,4 +23,3 @@ def get_weather_alerts():
         return None
 
 
-print(get_weather_alerts())

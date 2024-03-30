@@ -29,11 +29,17 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
                                     claims_data=None):
     prefix = f"{category}/"
     if category == "regulations":
-        query_text = f"Give me the {category} for {industry} industry for {state}."
+        # query_text = f"Give me the {category} for {industry} industry for {state}."
+        query_text = '''Give me the regulatory details for Construction industry in the state of California.
+                    Please provide the details given in the example below
+                    example
+                    Regulation : <Regulation number>
+                    Details    : <Give all the details of that regulation in bullet points>
+                    Date Implemented : <Date> '''
     else:
-        query_text = f"Give me the {category} tips for {industry} industry for {state}, {zip_code} and age group of {age - 10} - {age + 10}"
+
+        query_text = f"Give me the {category} tips for {industry} industry for {state} and age group of {age - 10} - {age + 10}"
                       # f" based on the claim data {claims_data}, age group of {age -10} - {age+10} without other data.")
-    print(query_text)
     chroma_path = f"/chroma/{prefix}"
     # Prepare the DB.
     embedding_function = OpenAIEmbeddings(openai_api_key=openai_api)
@@ -65,7 +71,7 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
         "state": state,
         "date": datetime.now().date().strftime("%Y-%m-%d")
     })
-    s3.put_object(Bucket=aws_bucket, Key=f"archive/{prefix}{datetime.now()}.json", Body=formatted_response)
+    # s3.put_object(Bucket=aws_bucket, Key=f"archive/{prefix}{datetime.now()}.json", Body=formatted_response)
     if response_text is not None:
         return formatted_response
     return None

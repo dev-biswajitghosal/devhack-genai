@@ -43,7 +43,7 @@ def analyze_risk_profile():
                 if weather_data is None:
                     return jsonify({'message': 'Unable to fetch the Vicinity data.'}), 400
                 response = generate_content(weather_data)
-                upload_file_to_s3(data=response, category=category, industry=industry, state=state)
+                # upload_file_to_s3(data=response, category=category, industry=industry, state=state)
                 return jsonify({'response': response, "date": datetime.now().date().strftime("%Y-%m-%d")}), 200
             else:
                 prefix = f"archive/{category}/"

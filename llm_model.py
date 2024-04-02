@@ -29,17 +29,20 @@ def generate_content_from_documents(category=None, industry=None, age=None, zip_
                                     claims_data=None):
     prefix = f"{category}/"
     if category == "regulations":
-        # query_text = f"Give me the {category} for {industry} industry for {state}."
         query_text = '''Give me the regulatory details for Construction industry in the state of California.
-                    Please provide the details given in the example below
-                    example
-                    Regulation : <Regulation number>
-                    Details    : <Give all the details of that regulation in bullet points>
-                    Date Implemented : <Date> '''
+                    Please provide the details like in the examples below. Provide output with atleast 5 regulatory 
+                    details in bullet points.
+                    example 1:
+                    Regulation : Title 9. Section 1538. Rock Drilling Operations.
+                    Details    : When drilling holes in rock, or other dust-producing material, the dust shall be controlled 
+                                within the maximum acceptable concentrations set forth in Section 5208 (asbestos) and 
+                                Section 5155 (silica and silicates) of the General Industry Safety Orders.
+                                 Respiratory protection may be acceptable; refer to Article 4, Sections 1530 and 1531.
+                    example 2:
+                    Regulation : title 8, section 3203
+                    Details    : Employer must have a written and effective Injury and Illness Prevention Program (IIPP)
+                                meeting the requirements of California Code of Regulations '''
     else:
-
-        # query_text = f"Give me the {category} tips for {industry} industry for {state} and age group of {age - 10} - {age + 10}"
-        # f" based on the claim data {claims_data}, age group of {age -10} - {age+10} without other data.")
         query_text = '''Give me the Safety tips for Constructions industry for the state California. 
                     Provide details regarding Safety Communications, Planning, rules, training and prevention programs.
                     The details can be as specific as required for the construction industry on Lifting techniques,
